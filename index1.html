@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURORA STUDIO | Premium Digital Engineering & Design Agency</title>
+    <style>
+        :root {
+            --bg-color: #030308;
+            --neon-cyan: #00f2fe;
+            --neon-purple: #9d4edd;
+            --glass-bg: rgba(6, 6, 14, 0.6);
+            --card-border: rgba(255, 255, 255, 0.05);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --text-main: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            cursor: default;
+        }
+
+        /* 3D WebGL Matrix Background */
+        #webgl-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Premium Ambient Aura */
+        .ambient-glow {
+            position: fixed;
+            width: 60vw; height: 60vw;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -2;
+            filter: blur(160px);
+            opacity: 0.1;
+            animation: atmosphericPulse 12s ease-in-out infinite alternate;
+        }
+        .glow-1 {
+            background: radial-gradient(circle, var(--neon-cyan) 0%, transparent 70%);
+            top: -20%; left: -10%;
+        }
+        .glow-2 {
+            background: radial-gradient(circle, var(--neon-purple) 0%, transparent 70%);
+            bottom: -20%; right: -10%;
+            animation-delay: -6s;
+        }
+
+        /* Navigation Header */
+        header {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 30px 10%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(3, 3, 8, 0.3);
+            backdrop-filter: blur(40px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            animation: headerEntrance 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 5px;
+            background: linear-gradient(90deg, #ffffff, var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 40px;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 700;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0; height: 1px;
+            bottom: -4px; left: 0;
+            background: var(--neon-cyan);
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .nav-links a:hover { color: #ffffff; }
+        .nav-links a:hover::after { width: 100%; }
+
+        .wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 4%;
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 150px;
+            text-align: center;
+        }
+
+        .headline {
+            font-size: 82px;
+            font-weight: 800;
+            letter-spacing: -3px;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            background: linear-gradient(180deg, #ffffff 50%, rgba(255,255,255,0.3) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textFadeUp 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .sub-headline {
+            font-size: 11px;
+            letter-spacing: 10px;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            margin-bottom: 60px;
+            font-weight: 700;
+            animation: textFadeUp 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* STARTUP SILICON BRAND TICKER */
+        .brand-ticker-container {
+            width: 100%;
+            overflow: hidden;
+            padding: 30px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.01);
+            margin-bottom: 120px;
+        }
+
+        .ticker-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .ticker-track {
+            display: flex;
+            width: max-content;
+            animation: scrollTicker 25s linear infinite;
+        }
+
+        .ticker-item {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 6px;
+            color: rgba(255, 255, 255, 0.15);
+            padding: 0 50px;
+            text-transform: uppercase;
+        }
+
+        /* SECTION HEADER ARCHITECTURE */
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-header h2 {
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+        }
+
+        .section-header p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* CAPABILITIES SERVICE MATRIX */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin-bottom: 140px;
+        }
+
+        .service-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 50px 35px;
+            backdrop-filter: blur(30px);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: networkFloat 6s ease-in-out infinite alternate;
+        }
+
+        .services-grid .service-card:nth-child(2) { animation-delay: 1s; }
+        .services-grid .service-card:nth-child(3) { animation-delay: 2s; }
+        .services-grid .service-card:nth-child(4) { animation-delay: 3s; }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 242, 254, 0.25);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            background: rgba(0, 242, 254, 0.01);
+        }
+
+        .card-icon {
+            font-size: 36px;
+            margin-bottom: 25px;
+            display: inline-block;
+        }
+
+        .service-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .service-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* CASE STUDIES PORTFOLIO */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 30px;
+            margin-bottom: 160px;
+        }
+
+        .portfolio-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(30px);
+            transition: all 0.4s ease;
+        }
+
+        .portfolio-card:hover {
+            border-color: var(--neon-purple);
+            background: rgba(157, 78, 221, 0.02);
+        }
+
+        .portfolio-card .tag {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--neon-purple);
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .portfolio-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .portfolio-metric {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .metric-block .num {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--neon-cyan);
+        }
+
+        .metric-block .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* CONVERSION INTAKE SECTION */
+        .contact-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 140px;
+        }
+
+        .contact-box {
+            width: 100%;
+            max-width: 700px;
+            background: var(--glass-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 60px;
+            backdrop-filter: blur(40px);
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5);
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 18px 22px;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            background: rgba(0, 242, 254, 0.02);
+        }
+
+        select.form-control option {
+            background: #040409;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #ffffff;
+            color: #000000;
+            padding: 18px;
+            border: none;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: var(--neon-cyan);
+            box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
+        }
+
+        /* Status Banner for Feedback */
+        .form-status {
+            margin-top: 20px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Animations Keyframes */
+        @keyframes textFadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes headerEntrance {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes networkFloat {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-15px); }
+        }
+        @keyframes scrollTicker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes atmosphericPulse {
+            0% { transform: scale(1); opacity: 0.08; }
+            100% { transform: scale(1.1); opacity: 0.15; }
+        }
+
+        @media (max-width: 900px) {
+            .headline { font-size: 46px; }
+            .contact-box { padding: 40px 20px; }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <canvas id="webgl-canvas"></canvas>
+
+    <header>
+        <div class="logo">AURORA.</div>
+        <div class="nav-links">
+            <a href="#services">Services</a>
+            <a href="#portfolio">Work</a>
+            <a href="#contact">Consultation</a>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        <!-- HERO SEGMENT -->
+        <section class="hero-section">
+            <h1 class="headline">We Build High-Performance<br>Digital Products</h1>
+            <p class="sub-headline">// Corporate Web Design, Applications & Cloud Systems</p>
+        </section>
+
+        <!-- STARTUP LOGO TICKER -->
+        <div class="brand-ticker-container">
+            <div class="ticker-title">Trusted by Modern Business Operators</div>
+            <div class="ticker-track">
+                <div class="ticker-item">AURA LABS</div>
+                <div class="ticker-item">NEXUS CAPTIAL</div>
+                <div class="ticker-item">VERTEX CORP</div>
+                <div class="ticker-item">QUANTUM AI</div>
+                <div class="ticker-item">ZEPHYR INC</div>
+                <div class="ticker-item">AURA LABS</div>
+                <div class="ticker-item">NEXUS CAPTIAL</div>
+                <div class="ticker-item">VERTEX CORP</div>
+                <div class="ticker-item">QUANTUM AI</div>
+                <div class="ticker-item">ZEPHYR INC</div>
+            </div>
+        </div>
+
+        <!-- SERVICES BLOCK -->
+        <section id="services">
+            <div class="section-header">
+                <h2>Our Capabilities</h2>
+                <p>Engineered solutions designed to accelerate corporate conversion metrics.</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <span class="card-icon">🌐</span>
+                    <h3>Web Design</h3>
+                    <p>Premium, responsive landing pages and enterprise systems built for speed, SEO, and business scale.</p>
+                </div>
+                <div class="service-card">
+                    <span class="card-icon">📱</span>
+                    <h3>App Development</h3>
+                    <p>High-performance cross-platform iOS and Android production apps with modular architecture layouts.</p>
+                </div>
+                <div class="service-card">
+                    <span class="card-icon">🎮</span>
+                    <h3>Game Development</h3>
+                    <p>Immersive production graphics, custom runtime interactions, and interactive asset creation pipelines.</p>
+                </div>
+                <div class="service-card">
+                    <span class="card-icon">☁️</span>
+                    <h3>Cloud Services</h3>
+                    <p>Zero-downtime integration setups, architecture scaling maps, and secure backend operations infrastructure.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PORTFOLIO CASE STUDIES -->
+        <section id="portfolio">
+            <div class="section-header">
+                <h2>Case Studies</h2>
+                <p>Real deployment parameters mapped directly to business growth metrics.</p>
+            </div>
+            <div class="portfolio-grid">
+                <div class="portfolio-card">
+                    <span class="tag">E-Commerce Architecture</span>
+                    <h3>Vertex Retail Hub</h3>
+                    <p>Migrated legacy multi-page site into a lightning-fast custom web framework with fluid checkouts.</p>
+                    <div class="portfolio-metric">
+                        <div class="metric-block"><div class="num">+140%</div><div class="label">Speed Load</div></div>
+                        <div class="metric-block"><div class="num">3.2x</div><div class="label">Sales Growth</div></div>
+                    </div>
+                </div>
+                <div class="portfolio-card">
+                    <span class="tag">Fintech Application</span>
+                    <h3>Nexus Capital Mobile</h3>
+                    <p>Designed and built a high-security encrypted digital wallet asset allocation app for global operations.</p>
+                    <div class="portfolio-metric">
+                        <div class="metric-block"><div class="num">4.9★</div><div class="label">App Store Rating</div></div>
+                        <div class="metric-block"><div class="num">200K+</div><div class="label">Active Users</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LIVE EMAIL FORM -->
+        <section id="contact" class="contact-container">
+            <div class="contact-box">
+                <div class="section-header" style="margin-bottom: 40px;">
+                    <h2>Book a Consultation</h2>
+                    <p>Transmit your technical scope variables. Our lead architect will sync with your desk.</p>
+                </div>
+                
+                <!-- Aapka unique Formspree link yahan connected hai -->
+                <form id="leadForm" action="https://formspree.io/f/meewbqnp" method="POST" onsubmit="processTransmission(event)">
+                    <div class="form-group">
+                        <label>Full Name / Company Identity</label>
+                        <input type="text" name="Client_Name" id="clientName" class="form-control" placeholder="e.g. Corporate Manager" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Business Email Protocol</label>
+                        <input type="email" name="Client_Email" id="clientEmail" class="form-control" placeholder="name@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Direct Contact (WhatsApp/Phone)</label>
+                        <input type="tel" name="Client_Phone" id="clientPhone" class="form-control" placeholder="+91 00000 00000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Project Stream Vector</label>
+                        <select name="Service_Requested" id="projectType" class="form-control" required>
+                            <option value="" disabled selected>Select core capability matrix...</option>
+                            <option value="Web Design">Web Design</option>
+                            <option value="App Development">App Development</option>
+                            <option value="Game Development">Game Development</option>
+                            <option value="Cloud Services">Cloud Services</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Project Scope Overview</label>
+                        <textarea name="Project_Brief" id="projectBrief" class="form-control" rows="4" placeholder="Briefly describe the product targets..." required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Submit Technical Brief</button>
+                    <div id="statusBanner" class="form-status"></div>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- 3D Background Engine Script -->
+    <script>
+        let scene, camera, renderer, particleGeometry, particleSystem;
+        let targetX = 0, targetY = 0, mouseX = 0, mouseY = 0;
+        let scrollY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            targetX = (e.clientX - window.innerWidth / 2) * 0.03;
+            targetY = (e.clientY - window.innerHeight / 2) * 0.03;
+        });
+
+        window.addEventListener('scroll', () => { scrollY = window.scrollY; });
+
+        function initEnterpriseEngine() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 10, 85);
+
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('webgl-canvas'), antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            particleGeometry = new THREE.BufferGeometry();
+            const count = 3500; 
+            const positions = new Float32Array(count * 3);
+
+            for (let i = 0; i < count * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 190;
+                positions[i + 1] = (Math.random() - 0.5) * 65;
+                positions[i + 2] = (Math.random() - 0.5) * 110;
+            }
+
+            particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const sprite = new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/circle.png');
+            const material = new THREE.PointsMaterial({
+                color: 0x00f2fe, size: 0.4, map: sprite, transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending, depthWrite: false
+            });
+
+            particleSystem = new THREE.Points(particleGeometry, material);
+            scene.add(particleSystem);
+            renderMainLoop();
+        }
+
+        let clock = new THREE.Clock();
+        function renderMainLoop() {
+            requestAnimationFrame(renderMainLoop);
+            const time = clock.getElapsedTime();
+            const positions = particleGeometry.attributes.position.array;
+
+            for (let i = 0; i < positions.length; i += 3) {
+                const x = positions[i]; const z = positions[i + 2];
+                positions[i + 1] = Math.sin(x * 0.04 + time * 1.1 + (scrollY * 0.005)) * 8 + Math.cos(z * 0.04 + time * 0.7) * 4;
+            }
+            particleGeometry.attributes.position.needsUpdate = true;
+            mouseX += (targetX - mouseX) * 0.04; mouseY += (targetY - mouseY) * 0.04;
+            particleSystem.rotation.y = time * 0.01 + (mouseX * 0.001); particleSystem.rotation.x = (mouseY * 0.001) + (scrollY * 0.0006);
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        window.onload = initEnterpriseEngine;
+
+        // HIGH PERFORMANCE BACKEND ROUTING LOGIC (ONLY EMAIL)
+        async function processTransmission(event) {
+            event.preventDefault();
+            const form = event.target;
+            const statusBanner = document.getElementById('statusBanner');
+
+            statusBanner.style.display = "block";
+            statusBanner.style.color = "var(--neon-cyan)";
+            statusBanner.innerText = "TRANSMITTING TELEMETRY TO BACKEND CORES...";
+
+            try {
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    body: new FormData(form),
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (response.ok) {
+                    statusBanner.style.color = "#00ff77";
+                    statusBanner.innerText = "🔒 MESSAGE SENT SUCCESSFULLY! WE WILL CONTACT YOU VIA EMAIL.";
+                    form.reset();
+                    
+                    setTimeout(() => {
+                        statusBanner.style.display = "none";
+                    }, 5000);
+
+                } else {
+                    throw new Error("Network routing rejected configuration.");
+                }
+            } catch (error) {
+                statusBanner.style.color = "#ff3333";
+                statusBanner.innerText = "ERROR SUBMITTING FORM. PLEASE TRY AGAIN LATER.";
+            }
+        }
+    </script>
+</body>
+</html>
